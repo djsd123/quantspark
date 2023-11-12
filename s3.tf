@@ -13,9 +13,9 @@ resource "aws_s3_bucket" "logs" {
   force_destroy = true
 }
 
-resource "aws_s3_bucket_policy" "web_oai" {
+resource "aws_s3_bucket_policy" "web_oac" {
   bucket = aws_s3_bucket.web.id
-  policy = data.aws_iam_policy_document.oai.json
+  policy = data.aws_iam_policy_document.oac_web_bucket_policy_document.json
 }
 
 resource "aws_s3_bucket_website_configuration" "web_config" {
