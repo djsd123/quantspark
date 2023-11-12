@@ -1,5 +1,9 @@
-resource "aws_cloudfront_origin_access_identity" "oai" {
-  comment = "Ensure users cannot access the site using the S3 url"
+resource "aws_cloudfront_origin_access_control" "oac" {
+  name                              = var.name
+  description                       = "Ensure users cannot access the site using the S3 url"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 }
 
 resource "aws_cloudfront_distribution" "dist" {
@@ -32,12 +36,9 @@ resource "aws_cloudfront_distribution" "dist" {
   }
 
   origin {
-    domain_name = aws_s3_bucket.web.bucket_regional_domain_name
-    origin_id   = aws_s3_bucket.web.arn
-
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
-    }
+    domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
+    origin_id                = aws_s3_bucket.web.arn
+    origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
   }
 
   restrictions {
